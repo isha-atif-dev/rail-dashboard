@@ -62,13 +62,13 @@ export default function MapPanel() {
             <button
               key={line.name}
               onClick={() => toggleLine(line.name)}
-              className={`bg-white shadow-sm text-xs font-medium px-3 py-1.5 rounded-full flex items-center gap-1.5 border ${activeLines.includes(line.name) ? 'border-slate-300' : 'border-transparent'}`}
+              className={`bg-white shadow-sm text-xs font-medium px-3 py-2 rounded-full flex items-center gap-1.5 border ${activeLines.includes(line.name) ? 'border-slate-300' : 'border-transparent'}`}
             >
               <span className="w-2 h-2 rounded-full" style={{ backgroundColor: line.color }} />
               <span className={lineFilterColors[line.name]}>{line.name}</span>
             </button>
           ))}
-          <button className="bg-red-600 hover:bg-red-700 transition-colors text-white text-xs font-semibold px-3.5 py-1.5 rounded-full flex items-center gap-1.5">
+          <button className="bg-red-600 hover:bg-red-700 transition-colors text-white text-xs font-semibold px-3.5 py-2 rounded-full flex items-center gap-1.5">
             <Flag size={12} /> Report Issue
           </button>
         </div>
@@ -83,14 +83,14 @@ export default function MapPanel() {
 
       {/* Zoom + locate controls */}
       <div className="absolute right-3 top-16 flex flex-col gap-2">
-        <button aria-label="Zoom in" className="w-9 h-9 bg-white shadow-sm rounded-lg flex items-center justify-center text-slate-600">
-          <Plus size={16} />
+        <button aria-label="Zoom in" className="w-11 h-11 bg-white shadow-sm rounded-lg flex items-center justify-center text-slate-600 active:bg-slate-50">
+          <Plus size={18} />
         </button>
-        <button aria-label="Zoom out" className="w-9 h-9 bg-white shadow-sm rounded-lg flex items-center justify-center text-slate-600">
-          <Minus size={16} />
+        <button aria-label="Zoom out" className="w-11 h-11 bg-white shadow-sm rounded-lg flex items-center justify-center text-slate-600 active:bg-slate-50">
+          <Minus size={18} />
         </button>
-        <button aria-label="Recenter map" className="w-9 h-9 bg-white shadow-sm rounded-lg flex items-center justify-center text-slate-600">
-          <LocateFixed size={16} />
+        <button aria-label="Recenter map" className="w-11 h-11 bg-white shadow-sm rounded-lg flex items-center justify-center text-slate-600 active:bg-slate-50">
+          <LocateFixed size={18} />
         </button>
       </div>
 

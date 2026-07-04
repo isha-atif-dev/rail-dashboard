@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { User, Mail, Apple } from 'lucide-react'
+import { Mail, Apple } from 'lucide-react'
 import AuthLayout from '../components/AuthLayout'
 import PasswordField from '../components/PasswordField'
 
@@ -15,24 +15,25 @@ function GoogleIcon() {
   )
 }
 
-export default function SignupPage() {
+export default function SignInPage() {
   const navigate = useNavigate()
-  const [form, setForm] = useState({ firstName: '', lastName: '', email: '', password: '', confirmPassword: '' })
+  const [form, setForm] = useState({ email: '', password: '', keepSignedIn: false })
 
-  const update = (field) => (e) => setForm((prev) => ({ ...prev, [field]: e.target.value }))
+  const update = (field) => (e) =>
+    setForm((prev) => ({ ...prev, [field]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Front-end only for now, this is where the signup API call goes once the backend is ready.
-    console.log('Create account submitted:', form)
-    navigate('/signin')
+    // Front-end only for now, this is where the sign in API call goes once the backend is ready.
+    console.log('Sign in submitted:', form)
+    navigate('/')
   }
 
   return (
-    <AuthLayout>
+    <AuthLayout cardWidth="max-w-[520px]">
       <form onSubmit={handleSubmit}>
-        <h1 className="text-3xl font-bold text-slate-900 mb-2">Create your account</h1>
-        <p className="text-slate-500 mb-6">Save stations, get personalized alerts and claim delay repay in one tap.</p>
+        <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome back</h1>
+        <p className="text-slate-500 mb-6">Sign in to pick up your journey where you left off.</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
           <button type="button" className="flex items-center justify-center gap-2 border border-slate-200 rounded-full py-3 text-sm font-medium text-slate-700 hover:bg-slate-100 bg-white">
@@ -49,23 +50,6 @@ export default function SignupPage() {
           <span className="flex-1 h-px bg-slate-200" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="text-sm font-medium text-slate-800 mb-1.5 block">First Name</label>
-            <div className="relative">
-              <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input value={form.firstName} onChange={update('firstName')} placeholder="First Name" className="w-full bg-white border border-slate-200 rounded-full pl-11 pr-4 py-3 text-sm outline-none focus:border-blue-400" />
-            </div>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-slate-800 mb-1.5 block">Last Name</label>
-            <div className="relative">
-              <User size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input value={form.lastName} onChange={update('lastName')} placeholder="Last Name" className="w-full bg-white border border-slate-200 rounded-full pl-11 pr-4 py-3 text-sm outline-none focus:border-blue-400" />
-            </div>
-          </div>
-        </div>
-
         <div className="mb-4">
           <label className="text-sm font-medium text-slate-800 mb-1.5 block">Email</label>
           <div className="relative">
@@ -74,18 +58,25 @@ export default function SignupPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-2">
-          <PasswordField label="Password" value={form.password} onChange={update('password')} placeholder="Password" />
-          <PasswordField label="Confirm Password" value={form.confirmPassword} onChange={update('confirmPassword')} placeholder="Confirm Password" />
-        </div>
-        <p className="text-xs text-slate-400 mb-6">Use a strong password with letters, numbers & symbols.</p>
+        <PasswordField
+          label="Password"
+          value={form.password}
+          onChange={update('password')}
+          placeholder="Password"
+          rightSlot={<Link to="/forgot-password" className="text-sm text-slate-500 hover:text-blue-600">Forgot?</Link>}
+        />
+
+        <label className="flex items-center gap-2 mt-4 mb-6 text-sm text-slate-600 cursor-pointer">
+          <input type="checkbox" checked={form.keepSignedIn} onChange={update('keepSignedIn')} className="rounded border-slate-300" />
+          Keep me signed in on this device
+        </label>
 
         <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-medium py-3.5 rounded-full">
-          Create Account
+          Sign in
         </button>
 
         <p className="text-center text-sm text-slate-500 mt-5">
-          Already have an account? <Link to="/signin" className="text-blue-600 font-medium">Sign in</Link>
+          New here? <Link to="/signup" className="text-blue-600 font-medium">Create an account</Link>
         </p>
       </form>
     </AuthLayout>
