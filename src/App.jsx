@@ -5,6 +5,7 @@ import SignupPage from './pages/SignupPage'
 import ForgotPasswordPage from './pages/ForgotPasswordPage'
 import CheckEmailPage from './pages/CheckEmailPage'
 import CreatePasswordPage from './pages/CreatePasswordPage'
+import AlertsPage from './pages/AlertsPage'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/check-email" element={<CheckEmailPage />} />
       <Route path="/reset-password" element={<CreatePasswordPage />} />
+      <Route path="/alerts" element={<AlertsPage />} />
     </Routes>
   )
 }

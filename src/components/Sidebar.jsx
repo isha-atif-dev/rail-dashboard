@@ -4,8 +4,9 @@ import {
   Search, Heart, Clock, ArrowUpDown, Bike, ParkingSquare, Building2,
   PartyPopper, Store, TrainFront, Megaphone, Users, Wrench, Home,
   AlertTriangle, Radio, Menu, X, Map, CalendarDays, Bell, HelpCircle,
+  Plus,
 } from 'lucide-react'
-import { lines, nearbyToggles, mapLayerToggles, liveFeed } from '../data/mockData'
+import { lines, liveFeed, savedJourneys } from '../data/mockData'
 import logo from '../assets/logo.png'
 
 const icons = { Bike, ParkingSquare, Building2, PartyPopper, Store, TrainFront, Megaphone, Users, Wrench, Home }
@@ -13,9 +14,11 @@ const feedIcons = { AlertTriangle, Users, Wrench, Megaphone }
 
 const navItems = [
   { label: 'Live Map', icon: Map, href: '/' },
+  { label: 'Journey Planner', icon: Search },
   { label: 'Calendar Sync', icon: CalendarDays },
-  { label: 'Station board', icon: TrainFront },
-  { label: 'Alerts & Notifications', icon: Bell },
+  { label: 'Alerts & Reports', icon: Bell, href: '/alerts' },
+  { divider: true },
+  { label: 'Settings', icon: HelpCircle },
   { label: 'Help', icon: HelpCircle },
 ]
 
@@ -44,16 +47,10 @@ function ToggleRow({ icon, label, enabled, onChange }) {
   )
 }
 
-export default function Sidebar() {
-  const [nearby, setNearby] = useState(nearbyToggles)
-  const [layers, setLayers] = useState(mapLayerToggles)
+export default function Sidebar({ nearby, toggleNearby, layers, toggleLayer }) {
   const [journeyTab, setJourneyTab] = useState('saved')
   const [menuOpen, setMenuOpen] = useState(false)
-
-  const toggleNearby = (i) =>
-    setNearby((prev) => prev.map((item, idx) => (idx === i ? { ...item, enabled: !item.enabled } : item)))
-  const toggleLayer = (i) =>
-    setLayers((prev) => prev.map((item, idx) => (idx === i ? { ...item, enabled: !item.enabled } : item)))
+  const [savedOpen, setSavedOpen] = useState(false)
 
   return (
     <aside className="w-full lg:w-[300px] shrink-0 bg-white border-r border-slate-200 flex flex-col h-full overflow-y-auto">
@@ -82,7 +79,8 @@ export default function Sidebar() {
               className="fixed inset-0 z-40 cursor-default"
             />
             <div className="absolute top-full left-3 mt-1 w-64 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-50">
-              {navItems.map((item) => {
+              {navItems.map((item, idx) => {
+                if (item.divider) return <hr key={idx} className="my-1.5 border-slate-100" />
                 const ItemIcon = item.icon
                 if (item.href) {
                   return (
@@ -118,19 +116,50 @@ export default function Sidebar() {
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-bold tracking-widest text-slate-400">PLAN JOURNEY</h2>
           </div>
-          <div className="flex gap-2 mb-3">
+          <div className="relative flex gap-2 mb-3">
             <button
-              onClick={() => setJourneyTab('saved')}
+              onClick={() => {
+                setJourneyTab('saved')
+                setSavedOpen((o) => (journeyTab === 'saved' ? !o : true))
+              }}
               className={`flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-full border ${journeyTab === 'saved' ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`}
             >
               <Heart size={12} /> Saved Journey
             </button>
             <button
-              onClick={() => setJourneyTab('leave')}
+              onClick={() => {
+                setJourneyTab('leave')
+                setSavedOpen(false)
+              }}
               className={`flex items-center gap-1.5 text-xs font-medium px-3 py-2 rounded-full border ${journeyTab === 'leave' ? 'border-blue-200 bg-blue-50 text-blue-700' : 'border-slate-200 text-slate-500'}`}
             >
               <Clock size={12} /> Leave now
             </button>
+
+            {savedOpen && (
+              <>
+                <button aria-label="Close saved journeys" onClick={() => setSavedOpen(false)} className="fixed inset-0 z-40 cursor-default" />
+                <div className="absolute top-full left-0 mt-2 w-80 max-w-[85vw] bg-white rounded-xl shadow-xl border border-slate-100 p-4 z-50">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-xs font-bold tracking-widest text-slate-400">SAVED JOURNEYS</h3>
+                    <button className="text-xs font-medium text-blue-600 flex items-center gap-1">
+                      <Plus size={12} /> Save Current
+                    </button>
+                  </div>
+                  <div className="space-y-1">
+                    {savedJourneys.map((j) => (
+                      <div key={j.route} className="flex items-center justify-between gap-2 py-2 border-b border-slate-50 last:border-0">
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-slate-800 truncate">{j.route}</p>
+                          <p className="text-xs text-slate-400 truncate">{j.stations}</p>
+                        </div>
+                        <Heart size={16} className={j.favorite ? 'text-red-500 fill-red-500 shrink-0' : 'text-slate-300 shrink-0'} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-2">

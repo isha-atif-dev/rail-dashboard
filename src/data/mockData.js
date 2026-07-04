@@ -1,6 +1,119 @@
 // All the data on this page is mock/static data for the front-end demo.
 // Once the backend/API is ready, these arrays get swapped for real fetched data.
 
+export const alerts = [
+  {
+    id: 'tap-out',
+    type: 'urgent',
+    badge: 'Urgent',
+    icon: 'LogOut',
+    title: 'Tap Out Reminder',
+    heading: 'Tap OUT at Stratford, now',
+    body: 'Tap out with your Blue Oyster before leaving the platform. Missing this tap will trigger a maximum fare charge.',
+    tag: 'Blue Oyster · active card',
+    time: 'Just now',
+    category: 'updates',
+    primaryLabel: "I've tapped out",
+    secondaryLabel: 'I missed it, log',
+  },
+  {
+    id: 'interchange',
+    type: 'action',
+    badge: 'Action needed',
+    icon: 'ArrowLeftRight',
+    title: 'Interchange Reminder',
+    heading: 'Interchange at Stratford, tap IN for Overground',
+    body: 'Tap in with your Blue Oyster for the Overground on Platform 2. Use the same card you tapped out with.',
+    tag: 'Blue Oyster · active card',
+    time: '3 min ago',
+    category: 'updates',
+    primaryLabel: 'Tapped in',
+    secondaryLabel: 'Wrong Card Used',
+  },
+  {
+    id: 'fare',
+    type: 'fare',
+    badge: 'Fare alert',
+    icon: 'PoundSterling',
+    title: 'Fare Warning',
+    heading: 'Fare increase risk on your route',
+    body: 'Your Morning Commute has an interchange at Stratford. Failing to tap out correctly here can add up to £6.50 to your fare.',
+    tag: 'Blue Oyster · active card',
+    time: '9 min ago',
+    category: 'disruptions',
+    primaryLabel: 'Got it',
+    secondaryLabel: null,
+  },
+  {
+    id: 'mismatch',
+    type: 'mismatch',
+    badge: 'Mismatch',
+    icon: 'CreditCard',
+    title: 'Card Mismatch',
+    heading: 'Wrong card detected at Paddington',
+    body: 'You tapped in with your Barclays card but your saved journey uses Blue Oyster. You may face a penalty fare.',
+    tag: 'Blue Oyster · active card',
+    time: 'Just now',
+    category: 'safety',
+    primaryLabel: 'Log dispute',
+    secondaryLabel: 'Dismiss',
+  },
+]
+
+export const alertFilters = [
+  { key: 'all', label: 'All', count: 5 },
+  { key: 'disruptions', label: 'Disruptions', count: 2 },
+  { key: 'safety', label: 'Safety', count: 1 },
+  { key: 'updates', label: 'Updates', count: 1 },
+  { key: 'engineering', label: 'Engineering', count: 1 },
+]
+
+export const notificationSettings = [
+  { key: 'tapOut', icon: 'LogOut', label: 'Tap out reminders', enabled: true },
+  { key: 'interchange', icon: 'ArrowLeftRight', label: 'Interchange reminders', enabled: false },
+  { key: 'fare', icon: 'PoundSterling', label: 'Fare warnings', enabled: true },
+  { key: 'mismatch', icon: 'CreditCard', label: 'Card mismatch alerts', enabled: false },
+  { key: 'severeDelays', icon: 'Clock', label: 'Severe delays', enabled: false },
+  { key: 'safety', icon: 'ShieldCheck', label: 'Safety alerts', enabled: true },
+  { key: 'engineering', icon: 'Wrench', label: 'Engineering works', enabled: true },
+  { key: 'service', icon: 'RefreshCw', label: 'Service updates', enabled: true },
+  { key: 'crowding', icon: 'Users', label: 'Crowding Alerts', enabled: false },
+  { key: 'events', icon: 'Globe', label: 'Events', enabled: true },
+]
+
+export const savedRoutesForAlerts = [
+  { route: 'Ealing Broadway → Paddington', line: 'Elizabeth line' },
+  { route: 'Stratford → Liverpool Street', line: 'Central line' },
+  { route: 'Clapham Junction → Victoria', line: 'Overground' },
+]
+
+export const favoriteStations = [
+  { name: 'Stratford', line: 'London' },
+  { name: 'Ealing Broadway', line: 'Elizabeth line' },
+  { name: 'Liverpool Street', line: 'Central line' },
+]
+
+export const reportCategories = [
+  { key: 'revenue', label: 'Revenue Protection', icon: 'Coins' },
+  { key: 'btp', label: 'British Transport Police', icon: 'Car' },
+  { key: 'beggars', label: 'Beggars', icon: 'HandCoins' },
+  { key: 'threat', label: 'Threatening Behavior & Violence', icon: 'Hand' },
+  { key: 'fault', label: 'Train Fault', icon: 'TrainFront' },
+  { key: 'crowded_train', label: 'Crowded Train', icon: 'Users' },
+  { key: 'crowded_platform', label: 'Crowded Platform', icon: 'UsersRound' },
+  { key: 'accessibility', label: 'Accessibility Issues', icon: 'CheckCircle2' },
+  { key: 'hazards', label: 'Hazards', icon: 'Radiation' },
+  { key: 'harassment', label: 'Sexual Harassment', icon: 'ShieldAlert' },
+  { key: 'drunk', label: 'Drunk & Disorderly', icon: 'PersonStanding' },
+  { key: 'vulnerable', label: 'Vulnerable Person & Mental Health', icon: 'HeartPulse' },
+]
+
+export const savedJourneys = [
+  { route: 'Boston → New York', stations: 'South Station → Moynihan Train Hall', favorite: false },
+  { route: 'Chicago → Seattle', stations: 'Chicago Union Station → King Street', favorite: true },
+  { route: 'New York → Washington, DC', stations: 'Penn Station → Union Station', favorite: true },
+]
+
 export const lines = [
   { name: 'Central', status: 'Good service', color: '#DC2626', level: 'good' },
   { name: 'Victoria', status: 'Minor delays', color: '#2563EB', level: 'minor' },
@@ -178,3 +291,25 @@ export const nextDepartures = [
   { destination: 'Orpington', line: 'Southeastern · Plat 2', time: '17:24', color: 'bg-emerald-500' },
   { destination: 'Epsom', line: 'Southern · Plat 16', time: '17:31', color: 'bg-sky-500' },
 ]
+
+// Real-ish coordinates around Warren Street / Euston area, London, used for the
+// interactive map's overlay pins.
+export const housingPins = [
+  { id: 1, lat: 51.5265, lng: -0.1385, price: '£720/mon' },
+  { id: 2, lat: 51.5258, lng: -0.1355, price: '£720/mon' },
+  { id: 3, lat: 51.5248, lng: -0.1310, price: '£720/mon' },
+  { id: 4, lat: 51.5238, lng: -0.1370, price: '£720/mon' },
+  { id: 5, lat: 51.5233, lng: -0.1345, price: '£720/mon' },
+  { id: 6, lat: 51.5228, lng: -0.1320, price: '£720/mon' },
+  { id: 7, lat: 51.5220, lng: -0.1400, price: '£720/mon' },
+  { id: 8, lat: 51.5218, lng: -0.1290, price: '£720/mon' },
+]
+
+export const coffeePins = [
+  { id: 1, lat: 51.5262, lng: -0.1330, name: 'Caffe Terrazzo', rating: 4.8, status: 'Closed', address: "1 Manor Road, London, England, inside Ealing Broadway station" },
+  { id: 2, lat: 51.5232, lng: -0.1390, name: 'Urban Brew Café', rating: 4.5, status: 'Closed', address: '14 King Street, Manchester' },
+  { id: 3, lat: 51.5225, lng: -0.1300, name: 'Bean & Bliss', rating: 4.9, status: 'Open', address: '18 Market Square, Cambridge' },
+  { id: 4, lat: 51.5215, lng: -0.1315, name: 'Café Aroma', rating: 4.9, status: 'Open', address: '20 George Street, Brighton' },
+]
+
+export const liveEventPin = { lat: 51.5268, lng: -0.1300, name: 'Rugby', location: "King's Cross St Pancras", date: 'Sat, 18 Jul 2026, 18:30' }
