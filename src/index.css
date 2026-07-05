@@ -1,1 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  /* Bumps the base size a notch so text reads closer to CityMapper/National Rail,
+     rather than the smaller default browser size. Everything using Tailwind's
+     rem-based scale (text sizes, spacing) scales up proportionally with it. */
+  font-size: 112.5%;
+}
+
+body {
+  font-family: var(--font-sans);
+}
