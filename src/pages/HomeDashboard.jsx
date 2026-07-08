@@ -3,6 +3,7 @@ import TopPromoBar from '../components/TopPromoBar'
 import SidebarTop from '../components/SidebarTop'
 import SidebarBottom from '../components/SidebarBottom'
 import MapPanel from '../components/MapPanel'
+import MapPlaceholder from '../components/MapPlaceholder'
 import FeatureCards from '../components/FeatureCards'
 import DepartureBoards from '../components/DepartureBoards'
 import DisruptionsAndEvents from '../components/DisruptionsAndEvents'
@@ -16,6 +17,9 @@ export default function HomeDashboard() {
   // e.g. switching on "Housebuddy" actually shows rental pins on the map.
   const [nearby, setNearby] = useState(nearbyToggles)
   const [layers, setLayers] = useState(mapLayerToggles)
+  // The map stays hidden until the person searches a journey or explicitly
+  // asks to see it, matching the Waze-style "destination first" flow.
+  const [mapOpen, setMapOpen] = useState(false)
 
   const toggleNearby = (i) =>
     setNearby((prev) => prev.map((item, idx) => (idx === i ? { ...item, enabled: !item.enabled } : item)))
@@ -27,10 +31,14 @@ export default function HomeDashboard() {
       <TopPromoBar />
 
       <div className="dashboard-grid">
-        <SidebarTop className="area-top lg:border-r border-slate-200" />
+        <SidebarTop className="area-top lg:border-r border-slate-200" onSearch={() => setMapOpen(true)} />
 
         <div className="area-map">
-          <MapPanel layers={layers} nearby={nearby} />
+          {mapOpen ? (
+            <MapPanel layers={layers} nearby={nearby} />
+          ) : (
+            <MapPlaceholder onOpen={() => setMapOpen(true)} />
+          )}
         </div>
 
         <SidebarBottom

@@ -16,7 +16,7 @@ const navItems = [
   { label: 'Help', icon: HelpCircle },
 ]
 
-export default function SidebarTop({ className = '' }) {
+export default function SidebarTop({ className = '', onSearch }) {
   const [journeyTab, setJourneyTab] = useState('saved')
   const [menuOpen, setMenuOpen] = useState(false)
   const [savedOpen, setSavedOpen] = useState(false)
@@ -184,7 +184,10 @@ export default function SidebarTop({ className = '' }) {
             </button>
           </div>
 
-          <button className="w-full bg-blue-700 hover:bg-blue-800 transition-colors text-white font-semibold text-base py-3.5 rounded-lg flex items-center justify-between px-5">
+          <button
+            onClick={() => onSearch?.()}
+            className="w-full bg-blue-700 hover:bg-blue-800 transition-colors text-white font-semibold text-base py-3.5 rounded-lg flex items-center justify-between px-5"
+          >
             Plan Journey <ArrowRight size={18} />
           </button>
         </section>
