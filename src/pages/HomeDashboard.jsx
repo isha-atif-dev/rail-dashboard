@@ -45,6 +45,7 @@ export default function HomeDashboard() {
           toggleNearby={toggleNearby}
           layers={layers}
           toggleLayer={toggleLayer}
+          mapOpen={mapOpen}
           className="area-rest lg:border-r border-slate-200"
         />
 

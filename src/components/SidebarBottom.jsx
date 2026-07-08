@@ -28,7 +28,9 @@ function ToggleRow({ icon, label, enabled, onChange }) {
   )
 }
 
-export default function SidebarBottom({ nearby, toggleNearby, layers, toggleLayer, className = '' }) {
+export default function SidebarBottom({ nearby, toggleNearby, layers, toggleLayer, mapOpen = true, className = '' }) {
+  if (!mapOpen) return null
+
   return (
     <div className={`bg-white px-5 py-5 space-y-6 ${className}`}>
       <section>
