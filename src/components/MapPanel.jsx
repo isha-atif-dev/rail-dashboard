@@ -1,9 +1,8 @@
-import { useRef, useState, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMap } from 'react-leaflet'
 import L from 'leaflet'
-import { Flag, Plus, Minus, LocateFixed, CloudLightning } from 'lucide-react'
+import { Plus, Minus, LocateFixed, CloudLightning } from 'lucide-react'
 import { lines, housingPins, coffeePins, liveEventPin } from '../data/mockData'
-import ReportIssueModal from './ReportIssueModal'
 
 const CENTER = [51.5246, -0.1339]
 
@@ -96,23 +95,12 @@ function MapBridge({ mapRef }) {
   return null
 }
 
-const lineFilterColors = {
-  Central: 'text-red-600',
-  Victoria: 'text-blue-600',
-  Northern: 'text-slate-800',
-  Elizabeth: 'text-violet-600',
-}
-
-export default function MapPanel({ layers, nearby, className = 'h-[420px] lg:h-[520px]' }) {
-  const [activeLines, setActiveLines] = useState([])
-  const [reportOpen, setReportOpen] = useState(false)
+// activeLines now comes from the parent (NavBar drives it), so the map and
+// the nav bar's line filter chips always agree with each other.
+export default function MapPanel({ layers, nearby, activeLines = [], className = 'h-[420px] lg:h-[520px]' }) {
   const mapRef = useRef(null)
 
   const isOn = (list, label) => list.find((i) => i.label === label)?.enabled
-
-  const toggleLine = (name) =>
-    setActiveLines((prev) => (prev.includes(name) ? prev.filter((l) => l !== name) : [...prev, name]))
-
   const visibleLines = activeLines.length ? activeLines : Object.keys(tubePaths)
 
   return (
@@ -175,42 +163,16 @@ export default function MapPanel({ layers, nearby, className = 'h-[420px] lg:h-[
           cycleParkingPins.map((p, i) => <Marker key={i} position={[p.lat, p.lng]} icon={badgeIcon('bike', '#db2777')} />)}
       </MapContainer>
 
-      {/* Top-left status stack: everything flows downward naturally here,
-          so if the line filter row wraps or scrolls on a narrow screen,
-          the disruption card below it just moves down too, nothing overlaps. */}
-      <div className="absolute top-3 left-3 right-3 z-[1000] flex flex-col items-start gap-2">
-        <span className="bg-white shadow-sm text-xs text-slate-600 px-3 py-1.5 rounded-full flex items-center gap-1.5 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Updated 2s ago · Central London
-        </span>
-
-        <div className="w-full flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-          {lines.map((line) => (
-            <button
-              key={line.name}
-              onClick={() => toggleLine(line.name)}
-              className={`bg-white shadow-sm text-xs font-medium px-3 py-2 rounded-full flex items-center gap-1.5 border shrink-0 ${activeLines.includes(line.name) ? 'border-slate-300' : 'border-transparent'}`}
-            >
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: line.color }} />
-              <span className={lineFilterColors[line.name]}>{line.name}</span>
-            </button>
-          ))}
-          <button
-            onClick={() => setReportOpen(true)}
-            className="bg-red-600 hover:bg-red-700 transition-colors text-white text-xs font-semibold px-3.5 py-2 rounded-full flex items-center gap-1.5 shrink-0"
-          >
-            <Flag size={12} /> Report Issue
-          </button>
-        </div>
-
-        <div className="w-56 max-w-[80vw] bg-slate-900 text-white rounded-xl p-4 shadow-lg">
-          <CloudLightning size={20} className="mb-3 text-slate-300" />
-          <p className="text-sm font-semibold leading-snug">Expect Disruption 43% Chance Of Service Changes.</p>
-          <p className="text-xs text-slate-400 mt-2">📍 Ealing</p>
-        </div>
+      {/* Only the disruption card floats on the map now, everything nav
+          related moved off the map entirely and into NavBar. */}
+      <div className="absolute top-3 left-3 z-[1000] w-56 max-w-[70vw] bg-slate-900 text-white rounded-xl p-4 shadow-lg">
+        <CloudLightning size={20} className="mb-3 text-slate-300" />
+        <p className="text-sm font-semibold leading-snug">Expect Disruption 43% Chance Of Service Changes.</p>
+        <p className="text-xs text-slate-400 mt-2">📍 Ealing</p>
       </div>
 
-      {/* Zoom and recenter live bottom-right, well clear of the top status stack */}
-      <div className="absolute right-3 bottom-3 z-[1000] flex flex-col gap-2">
+      {/* Sits above the floating "Where to?" search bar at the bottom, not under it */}
+      <div className="absolute right-3 bottom-24 z-[1000] flex flex-col gap-2">
         <button aria-label="Zoom in" onClick={() => mapRef.current?.zoomIn()} className="w-11 h-11 bg-white shadow-sm rounded-lg flex items-center justify-center text-slate-600 active:bg-slate-50">
           <Plus size={18} />
         </button>
@@ -222,7 +184,9 @@ export default function MapPanel({ layers, nearby, className = 'h-[420px] lg:h-[
         </button>
       </div>
 
-      <div className="absolute bottom-3 left-3 z-[1000] bg-white shadow-sm rounded-xl px-4 py-3 text-xs text-slate-600">
+      {/* Hidden on mobile, the marker colors already carry the meaning there
+          and this was getting buried under the search bar anyway */}
+      <div className="hidden sm:block absolute bottom-24 left-3 z-[1000] bg-white shadow-sm rounded-xl px-4 py-3 text-xs text-slate-600">
         <p className="font-bold tracking-widest text-[10px] text-slate-400 mb-2">LEGEND</p>
         <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
           <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-red-600" /> Delay</span>
@@ -231,8 +195,6 @@ export default function MapPanel({ layers, nearby, className = 'h-[420px] lg:h-[
           <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full bg-emerald-500" /> On time</span>
         </div>
       </div>
-
-      {reportOpen && <ReportIssueModal onClose={() => setReportOpen(false)} />}
     </div>
   )
 }

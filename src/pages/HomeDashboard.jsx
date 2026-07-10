@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import TopPromoBar from '../components/TopPromoBar'
-import FloatingTopBar from '../components/FloatingTopBar'
+import NavBar from '../components/NavBar'
 import JourneySheet from '../components/JourneySheet'
 import SidebarBottom from '../components/SidebarBottom'
 import MapPanel from '../components/MapPanel'
@@ -14,22 +14,26 @@ import { nearbyToggles, mapLayerToggles } from '../data/mockData'
 export default function HomeDashboard() {
   const [nearby, setNearby] = useState(nearbyToggles)
   const [layers, setLayers] = useState(mapLayerToggles)
+  // Lives here now so NavBar's line chips and the map itself always agree.
+  const [activeLines, setActiveLines] = useState([])
 
   const toggleNearby = (i) =>
     setNearby((prev) => prev.map((item, idx) => (idx === i ? { ...item, enabled: !item.enabled } : item)))
   const toggleLayer = (i) =>
     setLayers((prev) => prev.map((item, idx) => (idx === i ? { ...item, enabled: !item.enabled } : item)))
+  const toggleLine = (name) =>
+    setActiveLines((prev) => (prev.includes(name) ? prev.filter((l) => l !== name) : [...prev, name]))
 
   return (
     <div className="min-h-screen bg-slate-50 overflow-x-hidden">
       <TopPromoBar />
+      <NavBar activeLines={activeLines} onToggleLine={toggleLine} />
 
-      {/* Map-first hero, Waze-style: the map is the whole screen, everything
-          else (menu, sign in, search) floats on top of it, nothing is hidden
-          behind a click first. */}
-      <div className="relative h-[calc(100vh-42px)] min-h-[520px] w-full">
-        <MapPanel layers={layers} nearby={nearby} className="h-full" />
-        <FloatingTopBar />
+      {/* The map itself, search sheet floats on top of just this section.
+          Shorter on mobile (65vh) so a hint of the page below shows and
+          invites scrolling, full height from sm: up. */}
+      <div className="relative h-[65vh] sm:h-[75vh] lg:h-[calc(100vh-130px)] min-h-[420px] w-full">
+        <MapPanel layers={layers} nearby={nearby} activeLines={activeLines} className="h-full" />
         <JourneySheet />
       </div>
 
