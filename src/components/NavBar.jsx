@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { Menu, X, Map, Search, CalendarDays, Bell, HelpCircle, Flag } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { Menu, X, Map, Search, CalendarDays, Bell, HelpCircle, Flag, LogOut } from 'lucide-react'
 import { lines } from '../data/mockData'
 import logo from '../assets/logo.png'
 import ReportIssueModal from './ReportIssueModal'
+import { useAuth } from '../lib/AuthContext'
 
 const navItems = [
   { label: 'Live Map', icon: Map, href: '/' },
@@ -25,10 +26,21 @@ const lineFilterColors = {
 export default function NavBar({ activeLines, onToggleLine }) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [reportOpen, setReportOpen] = useState(false)
+  const [accountOpen, setAccountOpen] = useState(false)
+  const { user, signOut } = useAuth()
+  const navigate = useNavigate()
+
+  const firstName = user?.user_metadata?.first_name
+  const initial = (firstName?.[0] || user?.email?.[0] || '?').toUpperCase()
+
+  const handleSignOut = async () => {
+    setAccountOpen(false)
+    await signOut()
+    navigate('/')
+  }
 
   return (
     <div className="relative bg-white border-b border-slate-200">
-      {/* Row 1: menu, logo, sign in, a normal solid bar, not floating over anything */}
       <div className="flex items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">
           <button
@@ -41,9 +53,41 @@ export default function NavBar({ activeLines, onToggleLine }) {
           </button>
           <img src={logo} alt="TrainLive" className="h-8 w-auto" />
         </div>
-        <Link to="/signin" className="bg-blue-700 hover:bg-blue-800 transition-colors text-white text-sm font-semibold px-4 py-2 rounded-full">
-          Sign in
-        </Link>
+        {user ? (
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setAccountOpen((o) => !o)}
+              className="w-9 h-9 rounded-full bg-blue-700 hover:bg-blue-800 transition-colors text-white text-sm font-semibold flex items-center justify-center"
+            >
+              {initial}
+            </button>
+            {accountOpen && (
+              <>
+                <button aria-label="Close account menu" onClick={() => setAccountOpen(false)} className="fixed inset-0 z-40 cursor-default" />
+                <div className="absolute top-full right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-slate-100 py-2 z-50">
+                  {firstName && (
+                    <div className="px-4 py-2 text-sm text-slate-400 border-b border-slate-100 mb-1">
+                      Signed in as <span className="text-slate-700 font-medium">{firstName}</span>
+                    </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={handleSignOut}
+                    className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50"
+                  >
+                    <LogOut size={16} className="text-slate-500" />
+                    Sign out
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+        ) : (
+          <Link to="/signin" className="bg-blue-700 hover:bg-blue-800 transition-colors text-white text-sm font-semibold px-4 py-2 rounded-full">
+            Sign in
+          </Link>
+        )}
 
         {menuOpen && (
           <>
@@ -80,7 +124,6 @@ export default function NavBar({ activeLines, onToggleLine }) {
         )}
       </div>
 
-      {/* Row 2: live status, line filters, report, one clean scrollable row */}
       <div className="flex items-center gap-2 overflow-x-auto no-scrollbar px-4 pb-3">
         <span className="bg-slate-50 text-xs text-slate-600 px-3 py-1.5 rounded-full flex items-center gap-1.5 shrink-0">
           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> Updated 2s ago

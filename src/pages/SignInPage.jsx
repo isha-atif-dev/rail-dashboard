@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { Mail, Apple } from 'lucide-react'
+import { Mail, Apple, AlertCircle } from 'lucide-react'
 import AuthLayout from '../components/AuthLayout'
 import PasswordField from '../components/PasswordField'
+import { supabase } from '../lib/supabaseClient'
 
 function GoogleIcon() {
   return (
@@ -18,14 +19,36 @@ function GoogleIcon() {
 export default function SignInPage() {
   const navigate = useNavigate()
   const [form, setForm] = useState({ email: '', password: '', keepSignedIn: false })
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
 
   const update = (field) => (e) =>
     setForm((prev) => ({ ...prev, [field]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }))
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    // Front-end only for now, this is where the sign in API call goes once the backend is ready.
-    console.log('Sign in submitted:', form)
+    setError('')
+    setLoading(true)
+
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: form.email.trim(),
+      password: form.password,
+    })
+
+    setLoading(false)
+
+    if (signInError) {
+      const msg = signInError.message.toLowerCase()
+      if (msg.includes('invalid login credentials')) {
+        setError("That email and password combination doesn't match an account.")
+      } else if (msg.includes('email not confirmed')) {
+        setError('Please confirm your email address first, check your inbox for the link we sent.')
+      } else {
+        setError(signInError.message)
+      }
+      return
+    }
+
     navigate('/')
   }
 
@@ -36,10 +59,10 @@ export default function SignInPage() {
         <p className="text-slate-500 mb-6">Sign in to pick up your journey where you left off.</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
-          <button type="button" className="flex items-center justify-center gap-2 border border-slate-200 rounded-full py-3 text-sm font-medium text-slate-700 hover:bg-slate-100 bg-white">
+          <button type="button" disabled className="flex items-center justify-center gap-2 border border-slate-200 rounded-full py-3 text-sm font-medium text-slate-400 bg-slate-50 cursor-not-allowed">
             <GoogleIcon /> Sign in with Google
           </button>
-          <button type="button" className="flex items-center justify-center gap-2 border border-slate-200 rounded-full py-3 text-sm font-medium text-slate-700 hover:bg-slate-100 bg-white">
+          <button type="button" disabled className="flex items-center justify-center gap-2 border border-slate-200 rounded-full py-3 text-sm font-medium text-slate-400 bg-slate-50 cursor-not-allowed">
             <Apple size={18} /> Sign in with Apple
           </button>
         </div>
@@ -50,11 +73,18 @@ export default function SignInPage() {
           <span className="flex-1 h-px bg-slate-200" />
         </div>
 
+        {error && (
+          <div className="flex items-start gap-2.5 bg-red-50 border border-red-100 rounded-xl px-4 py-3 mb-5">
+            <AlertCircle size={16} className="text-red-500 shrink-0 mt-0.5" />
+            <p className="text-sm text-red-700">{error}</p>
+          </div>
+        )}
+
         <div className="mb-4">
           <label className="text-sm font-medium text-slate-800 mb-1.5 block">Email</label>
           <div className="relative">
             <Mail size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-            <input type="email" value={form.email} onChange={update('email')} placeholder="Enter your Professional Email" className="w-full bg-white border border-slate-200 rounded-full pl-11 pr-4 py-3 text-sm outline-none focus:border-blue-400" />
+            <input type="email" required value={form.email} onChange={update('email')} placeholder="Enter your Professional Email" className="w-full bg-white border border-slate-200 rounded-full pl-11 pr-4 py-3 text-sm outline-none focus:border-blue-400" />
           </div>
         </div>
 
@@ -71,8 +101,8 @@ export default function SignInPage() {
           Keep me signed in on this device
         </label>
 
-        <button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 transition-colors text-white font-medium py-3.5 rounded-full">
-          Sign in
+        <button type="submit" disabled={loading} className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 transition-colors text-white font-medium py-3.5 rounded-full">
+          {loading ? 'Signing in…' : 'Sign in'}
         </button>
 
         <p className="text-center text-sm text-slate-500 mt-5">

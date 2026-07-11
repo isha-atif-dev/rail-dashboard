@@ -8,6 +8,8 @@ export default function WelcomeScreen({ onDismiss }) {
     navigate(path)
   }
 
+  const continueAsGuest = () => onDismiss()
+
   return (
     <div
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-between px-6 pt-16 pb-8"
@@ -36,7 +38,7 @@ export default function WelcomeScreen({ onDismiss }) {
       <div className="w-full max-w-sm space-y-3">
         <button
           type="button"
-          onClick={() => go('/signup')}
+          onClick={continueAsGuest}
           className="w-full bg-blue-600 hover:bg-blue-500 transition-colors text-white font-semibold py-3.5 rounded-full"
         >
           Get started
