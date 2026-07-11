@@ -8,14 +8,16 @@ import CheckEmailPage from './pages/CheckEmailPage'
 import CreatePasswordPage from './pages/CreatePasswordPage'
 import AlertsPage from './pages/AlertsPage'
 import SplashScreen from './components/SplashScreen'
+import WelcomeScreen from './components/WelcomeScreen'
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(true)
   const [fadingOut, setFadingOut] = useState(false)
+  const [showWelcome, setShowWelcome] = useState(
+    () => localStorage.getItem('trainlive_onboarded') !== 'true'
+  )
 
   useEffect(() => {
-    // Start fading just before the 2.5s mark, so the fade itself finishes
-    // right at 2.5s instead of adding extra time on top of it.
     const fadeTimer = setTimeout(() => setFadingOut(true), 2000)
     const removeTimer = setTimeout(() => setShowSplash(false), 2500)
     return () => {
@@ -26,6 +28,17 @@ export default function App() {
 
   if (showSplash) {
     return <SplashScreen fadingOut={fadingOut} />
+  }
+
+  if (showWelcome) {
+    return (
+      <WelcomeScreen
+        onDismiss={() => {
+          localStorage.setItem('trainlive_onboarded', 'true')
+          setShowWelcome(false)
+        }}
+      />
+    )
   }
 
   return (
