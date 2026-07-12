@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Search, Heart, Clock, ArrowUpDown, ArrowRight, X, Plus } from 'lucide-react'
 import { savedJourneys } from '../data/mockData'
+import { planJourney } from '../lib/mockJourneyPlanner'
+import JourneyResults from './JourneyResults'
 
 export default function JourneySheet() {
   const [expanded, setExpanded] = useState(false)
@@ -8,6 +10,7 @@ export default function JourneySheet() {
   const [savedOpen, setSavedOpen] = useState(false)
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
+  const [journey, setJourney] = useState(null)
 
   const handleSwap = () => {
     setFrom(to)
@@ -15,7 +18,7 @@ export default function JourneySheet() {
   }
 
   const handlePlanJourney = () => {
-    setExpanded(false)
+    setJourney(planJourney(from, to))
   }
 
   if (!expanded) {
@@ -46,6 +49,10 @@ export default function JourneySheet() {
           <button onClick={() => setExpanded(false)} aria-label="Collapse" className="w-10 h-1.5 rounded-full bg-slate-200" />
         </div>
 
+        {journey ? (
+          <JourneyResults journey={journey} onBack={() => setJourney(null)} />
+        ) : (
+          <>
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-xs font-bold tracking-widest text-slate-400">PLAN JOURNEY</h2>
           <button onClick={() => setExpanded(false)} aria-label="Close" className="text-slate-400">
@@ -151,6 +158,8 @@ export default function JourneySheet() {
         >
           Plan Journey <ArrowRight size={18} />
         </button>
+          </>
+        )}
       </div>
     </div>
   )
