@@ -6,12 +6,15 @@ import { getStationScore } from '../lib/stationRatings'
 export default function StationPopup({ stationId, stationName }) {
   const [score, setScore] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
   const [rating, setRating] = useState(false)
 
   const load = () => {
     setLoading(true)
+    setLoadError(false)
     getStationScore(stationId)
       .then(setScore)
+      .catch(() => setLoadError(true))
       .finally(() => setLoading(false))
   }
 
@@ -19,6 +22,10 @@ export default function StationPopup({ stationId, stationName }) {
 
   if (loading) {
     return <div className="text-xs text-slate-400 px-2 py-3">Loading rating…</div>
+  }
+
+  if (loadError || !score) {
+    return <div className="text-xs text-slate-400 px-2 py-3">Couldn't load ratings for this station right now.</div>
   }
 
   if (rating) {

@@ -15,8 +15,6 @@ export default function JourneySheet() {
   }
 
   const handlePlanJourney = () => {
-    // A real search collapses the sheet back down, the same way Waze tucks
-    // its search sheet away once a destination is set, giving the map more room.
     setExpanded(false)
   }
 
@@ -55,13 +53,13 @@ export default function JourneySheet() {
           </button>
         </div>
 
-        <div className="relative flex rounded-lg border border-slate-200 overflow-hidden mb-4">
+        <div className="relative bg-slate-100 rounded-full p-1 flex mb-4">
           <button
             onClick={() => {
               setJourneyTab('saved')
               setSavedOpen((o) => (journeyTab === 'saved' ? !o : true))
             }}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-semibold transition-colors ${journeyTab === 'saved' ? 'bg-blue-700 text-white' : 'bg-white text-blue-700'}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold rounded-full transition-colors ${journeyTab === 'saved' ? 'bg-blue-700 text-white shadow-sm' : 'text-slate-500'}`}
           >
             <Heart size={14} /> Saved Journey
           </button>
@@ -70,7 +68,7 @@ export default function JourneySheet() {
               setJourneyTab('leave')
               setSavedOpen(false)
             }}
-            className={`flex-1 flex items-center justify-center gap-1.5 py-3 text-sm font-semibold transition-colors ${journeyTab === 'leave' ? 'bg-blue-700 text-white' : 'bg-white text-blue-700'}`}
+            className={`flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-semibold rounded-full transition-colors ${journeyTab === 'leave' ? 'bg-blue-700 text-white shadow-sm' : 'text-slate-500'}`}
           >
             <Clock size={14} /> Leave now
           </button>
@@ -78,7 +76,7 @@ export default function JourneySheet() {
           {savedOpen && (
             <>
               <button aria-label="Close saved journeys" onClick={() => setSavedOpen(false)} className="fixed inset-0 z-40 cursor-default" />
-              <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-xl shadow-xl border border-slate-100 p-4 z-50">
+              <div className="absolute top-full left-0 mt-2 w-full bg-white rounded-2xl shadow-xl border border-slate-100 p-4 z-50">
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-xs font-bold tracking-widest text-slate-400">SAVED JOURNEYS</h3>
                   <button className="text-xs font-medium text-blue-600 flex items-center gap-1">
@@ -101,52 +99,55 @@ export default function JourneySheet() {
           )}
         </div>
 
-        <div className="relative mb-4">
-          <div className="border border-slate-200 rounded-t-lg px-4 py-2.5 bg-white">
-            <label className="text-xs text-slate-400 block">Starting station</label>
-            <div className="flex items-center justify-between gap-2">
+        <div className="relative mb-5 space-y-2">
+          <div className="flex items-center gap-3 bg-slate-50 rounded-2xl px-4 py-3">
+            <span className="w-2.5 h-2.5 rounded-full bg-blue-600 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <label className="text-xs text-slate-400 block">Starting station</label>
               <input
                 value={from}
                 onChange={(e) => setFrom(e.target.value)}
                 placeholder="Add station"
                 className="text-base font-medium text-slate-800 outline-none w-full bg-transparent placeholder:text-slate-300 placeholder:font-normal"
               />
-              {from && (
-                <button onClick={() => setFrom('')} aria-label="Clear starting station" className="text-slate-400 shrink-0">
-                  <X size={18} />
-                </button>
-              )}
             </div>
+            {from && (
+              <button onClick={() => setFrom('')} aria-label="Clear starting station" className="text-slate-400 shrink-0">
+                <X size={18} />
+              </button>
+            )}
           </div>
-          <div className="border border-t-0 border-slate-200 rounded-b-lg px-4 py-2.5 bg-white">
-            <label className="text-xs text-slate-400 block">Destination (optional)</label>
-            <div className="flex items-center justify-between gap-2">
+
+          <div className="flex items-center gap-3 bg-slate-50 rounded-2xl px-4 py-3">
+            <span className="w-2.5 h-2.5 rounded-full border-2 border-slate-400 shrink-0" />
+            <div className="flex-1 min-w-0">
+              <label className="text-xs text-slate-400 block">Destination (optional)</label>
               <input
                 value={to}
                 onChange={(e) => setTo(e.target.value)}
                 placeholder="Add station"
                 className="text-base font-medium text-slate-800 outline-none w-full bg-transparent placeholder:text-slate-300 placeholder:font-normal"
               />
-              {to && (
-                <button onClick={() => setTo('')} aria-label="Clear destination" className="text-slate-400 shrink-0">
-                  <X size={18} />
-                </button>
-              )}
             </div>
+            {to && (
+              <button onClick={() => setTo('')} aria-label="Clear destination" className="text-slate-400 shrink-0">
+                <X size={18} />
+              </button>
+            )}
           </div>
 
           <button
             onClick={handleSwap}
             aria-label="Swap stations"
-            className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white border border-slate-300 shadow-sm flex items-center justify-center text-blue-700"
+            className="absolute right-4 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center text-blue-700"
           >
-            <ArrowUpDown size={16} />
+            <ArrowUpDown size={15} />
           </button>
         </div>
 
         <button
           onClick={handlePlanJourney}
-          className="w-full bg-blue-700 hover:bg-blue-800 transition-colors text-white font-semibold text-base py-3.5 rounded-lg flex items-center justify-between px-5"
+          className="w-full bg-blue-700 hover:bg-blue-800 transition-colors text-white font-semibold text-base py-3.5 rounded-full flex items-center justify-between px-6"
         >
           Plan Journey <ArrowRight size={18} />
         </button>
